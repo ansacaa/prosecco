@@ -34,7 +34,7 @@ class Simulator:
     self.schedules = copy.deepcopy(self.props['global']['timeTables']) # dict([(schedule, timeTableDefs[schedule]) for schedule in timeTableDefs.keys()])
     self.createResources()
     self.log = open("simulation_log.csv", "w")
-    self.log.write("timestamp;activity_name;case;resource;event_type\n")
+    self.log.write("timestamp;activity_name;case;resource;role;event_type\n")
 
     for timetable in self.timeTables:
       self.env.process(self.scheduleControl(self.props['global']['timeTables'][timetable], self.timeTables[timetable]))
@@ -67,7 +67,7 @@ class Simulator:
     yield self.env.timeout(entityObject['start'])
     thisMoment = self.startDate + timedelta(days = self.env.now/86400 - self.daysOffset)
     
-    self.log.write(thisMoment.isoformat() + ";"  + node[1]['node_name'] + ";" + str(entityObject['caseId']) + ";NULL;complete\n")
+    self.log.write(thisMoment.isoformat() + ";"  + node[1]['node_name'] + ";" + str(entityObject['caseId']) + ";NULL;NULL;complete\n")
     for outgoing in node[1]['outgoing']:
       self.update(outgoing, 1, entityObject['orJoins'])
       flows[outgoing].succeed()
@@ -75,7 +75,7 @@ class Simulator:
   def endEventGenerator(self, node, flows, simProps, entityObject):
     yield AnyOf(self.env, [flows[incoming] for incoming in node[1]['incoming']])
     thisMoment = self.startDate + timedelta(days = int(self.env.now)/86400 - self.daysOffset)
-    self.log.write(thisMoment.isoformat() + ";"  + node[1]['node_name'] + ";" + str(entityObject['caseId']) + ";NULL;complete\n")
+    self.log.write(thisMoment.isoformat() + ";"  + node[1]['node_name'] + ";" + str(entityObject['caseId']) + ";NULL;NULL;complete\n")
   
   def activityGenerator(self, node, flows, simProps, entityObject):
     while True:
@@ -99,8 +99,9 @@ class Simulator:
       
       #Log Writing Start
       resourceName = "NULL" if res is None else res.name
+      resourceRole = "NULL" if res is None else res.role
       thisMoment = self.startDate + timedelta(days = int(self.env.now)/86400 - self.daysOffset)
-      self.log.write(thisMoment.isoformat() + ";"  + node[1]['node_name'] + ";" + str(entityObject['caseId']) + ";" + str(resourceName) + ";start\n")
+      self.log.write(thisMoment.isoformat() + ";"  + node[1]['node_name'] + ";" + str(entityObject['caseId']) + ";" + str(resourceName) + ";" + str(resourceRole) + ";start\n")
       
       #Simulate time spend
       while duration > 0:
@@ -116,7 +117,7 @@ class Simulator:
 
       #Log Writting complete
       thisMoment = self.startDate + timedelta(days = int(self.env.now)/86400 - self.daysOffset)
-      self.log.write(thisMoment.isoformat() + ";"  + node[1]['node_name'] + ";" + str(entityObject['caseId']) + ";" + str(resourceName) + ";complete\n")
+      self.log.write(thisMoment.isoformat() + ";"  + node[1]['node_name'] + ";" + str(entityObject['caseId']) + ";" + str(resourceName) + ";" + str(resourceRole) + ";complete\n")
       
       #Relese further activities
       if res is not None:
@@ -277,6 +278,7 @@ class Simulator:
         for _n in range(defaultQuantity):
             resourceItem = PreemptiveResource(self.env, 1)
             resourceItem.name = fake.name()
+            resourceItem.role = res['id']
             resourceItem.timetable = res['defaultTimetableId']
             self.resources[resource].put(resourceItem)
             self.timeTables[timetable].append(resourceItem)
