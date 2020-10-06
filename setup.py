@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="procsim", # Replace with your own username
-    version="0.0.1",
+    version="0.0.2",
     author="Antonio Sanchez Cabrera",
     author_email="dev.ansaca@gmail.com",
     description="This is a BPMN Diagram process simulator",

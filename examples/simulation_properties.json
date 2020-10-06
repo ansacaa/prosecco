@@ -1,0 +1,13 @@
+{
+    "UserTask_07b7vqr": { "duration": { "timeUnit": "MINUTES", "distribution": "exponentialDistribution", "params": { "mean": 15.0 } }, "resources": ["Sachbearbeiter"] },
+    "ExclusiveGateway_0fdiprc": { "SequenceFlow_1rwddob": 0.2, "SequenceFlow_1ucpl9y": 0.8 },
+    "Task_0ejr4pv": { "duration": { "timeUnit": "SECONDS", "distribution": "exponentialDistribution", "params": { "mean": 60.0 } }, "resources": [] },
+    "Task_14xyc1v": { "duration": { "timeUnit": "HOURS", "distribution": "constantDistribution", "params": { "constantValue": 48.0 } }, "resources": [] },
+    "UserTask_1jdy2bz": { "duration": { "timeUnit": "HOURS", "distribution": "constantDistribution", "params": { "constantValue": 2.0 } }, "resources": ["Sachbearbeiter"] },
+    "UserTask_12gn4u1": { "duration": { "timeUnit": "MINUTES", "distribution": "constantDistribution", "params": { "constantValue": 60.0 } }, "resources": ["Manager"] },
+    "ExclusiveGateway_1njun59": { "SequenceFlow_0s080ub": 0.6, "SequenceFlow_0p4v4z2": 0.4 },
+    "SendTask_060ap9q": { "duration": { "timeUnit": "SECONDS", "distribution": "exponentialDistribution", "params": { "mean": 60.0 } }, "resources": [] },
+    "SendTask_1ens7cx": { "duration": { "timeUnit": "SECONDS", "distribution": "exponentialDistribution", "params": { "mean": 60.0 } }, "resources": [] },
+    "Task_0z3btzz": { "duration": { "timeUnit": "HOURS", "distribution": "constantDistribution", "params": { "constantValue": 48.0 } }, "resources": [] },
+    "StartEvent_1vcwaly": { "arrivalRate": { "timeUnit": "HOURS", "distribution": "constantDistribution", "params": { "constantValue": 0.5 } } }
+}

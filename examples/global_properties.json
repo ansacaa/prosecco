@@ -1,0 +1,90 @@
+{
+    "resources": {
+        "Sachbearbeiter": { "id": "Sachbearbeiter", "defaultQuantity": 5, "defaultCost": 0.0, "defaultTimeUnit": "HOURS", "defaultTimetableId": "Sachbearbeiter_Timetable" },
+        "Manager": { "id": "Manager", "defaultQuantity": 1, "defaultCost": 0.0, "defaultTimeUnit": "HOURS", "defaultTimetableId": "Manager_Timetable" }
+    },
+    "timeTables": [{
+            "id": "Default",
+            "items": [{
+                "from": "MONDAY",
+                "to": "SUNDAY",
+                "beginTime": "00:00",
+                "endTime": "23:59"
+            }]
+        },
+        {
+            "id": "Sachbearbeiter_Timetable",
+            "items": [{
+                    "from": "MONDAY",
+                    "to": "MONDAY",
+                    "beginTime": "08:00",
+                    "endTime": "12:00"
+                },
+                {
+                    "from": "MONDAY",
+                    "to": "MONDAY",
+                    "beginTime": "14:00",
+                    "endTime": "17:00"
+                },
+                {
+                    "from": "WEDNESDAY",
+                    "to": "WEDNESDAY",
+                    "beginTime": "09:00",
+                    "endTime": "10:00"
+                },
+                {
+                    "from": "WEDNESDAY",
+                    "to": "WEDNESDAY",
+                    "beginTime": "12:00",
+                    "endTime": "14:00"
+                },
+                {
+                    "from": "FRIDAY",
+                    "to": "FRIDAY",
+                    "beginTime": "08:00",
+                    "endTime": "16:00"
+                }
+            ]
+        },
+        {
+            "id": "Manager_Timetable",
+            "items": [{
+                    "from": "MONDAY",
+                    "to": "MONDAY",
+                    "beginTime": "10:00",
+                    "endTime": "16:00"
+                },
+                {
+                    "from": "TUESDAY",
+                    "to": "TUESDAY",
+                    "beginTime": "11:00",
+                    "endTime": "12:00"
+                },
+                {
+                    "from": "TUESDAY",
+                    "to": "TUESDAY",
+                    "beginTime": "16:00",
+                    "endTime": "20:00"
+                },
+                {
+                    "from": "WEDNESDAY",
+                    "to": "WEDNESDAY",
+                    "beginTime": "10:00",
+                    "endTime": "16:00"
+                },
+                {
+                    "from": "WEDNESDAY",
+                    "to": "WEDNESDAY",
+                    "beginTime": "18:00",
+                    "endTime": "20:00"
+                },
+                {
+                    "from": "WEDNESDAY",
+                    "to": "WEDNESDAY",
+                    "beginTime": "22:00",
+                    "endTime": "23:00"
+                }
+            ]
+        }
+    ]
+}

@@ -9,20 +9,29 @@ The easiest way to install and use procsim is by using the package manager [pip]
 ```bash
 pip install -i https://test.pypi.org/simple/ procsim
 ```
+
+if you have any problem with the dependencies try running this command:
+
+```bash
+pip install pm4pybpmn
+pip install simpy
+pip install Faker
+```
+
 Or you can download the source code from our [Github repository](https://github.com/ansacaa/prosecco) and importit manually.
 
 ## Usage
 
-To use procsim first you need to specify which diagram is going to be simulated, such as the properties of the simulation itself. These properties are dictionaries that can be represented an stored on a JSON file (more details on the format of the properties can be found bellow) for testing purposes you can use some of our example files. The Properties class is the one in charge of managing all this parameters.
+To use procsim first you need to specify which diagram is going to be simulated, such as the properties of the simulation itself. These properties are dictionaries that can be represented an stored on a JSON file (more details on the format of the properties can be found bellow) for testing purposes you can use some of our [example files](https://github.com/ansacaa/prosecco/tree/master/examples). The Properties class is the one in charge of managing all this parameters.
 
 ```python
 from procsim.properties import Properties
 from procsim.simulator import Simulator
 import json
 
-diagramPath = "./diagrams/diagram_credit_2.bpmn"
-globalProperties = json.load(open('./diagrams/global.json'))
-simulationProperties = json.load(open('./diagrams/simulation.json'))
+diagramPath = "./diagrams/example_diagram.bpmn"
+globalProperties = json.load(open('./diagrams/global_properties.json'))
+simulationProperties = json.load(open('./diagrams/simulation_properties.json'))
 
 properties = Properties(diagramPath, globalProperties, simulationProperties)
 ```
@@ -81,7 +90,7 @@ The value object change depending on whether the node is a task, a gateway or an
 * Task: As with the gateways, not all task are required to have a properties object, if no object is defined for a task the simulator will assume it has a 0 seconds duration and that it uses no resources. In case you want to change any of those things on the simulation you will need to add that task to the simulation properties file. The structure is as following:
     * duration: an object that the defines how the duration of the task will be calculated, the format of this object is the same as arrivalRate for a start event.
     * resources: an array containing the id's of the resources this task needs in order to be accomplished.
-    
+
 
 ## License
 [APACHE 2.0](https://www.apache.org/licenses/LICENSE-2.0)
