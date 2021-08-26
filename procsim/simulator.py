@@ -410,7 +410,7 @@ class Simulator:
                 simulated += step
                 missing -= step
                 if simulated < task.duration:
-                    self.logger.write(task, self, "susppend")
+                    self.logger.write(task, self, "suspend")
                     yield self.env.timeout(self._changeSchedule())
                     self.logger.write(task, self, "resume")
 
