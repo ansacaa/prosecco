@@ -1,7 +1,7 @@
 from simpy import Environment, Resource, PreemptiveResource, Store, PriorityStore
 from simpy.events import AllOf, AnyOf, Event
 from simpy.exceptions import Interrupt
-from random import random, seed, randint, expovariate
+from random import expovariate, normalvariate, randint, random, seed
 
 from datetime import timedelta
 from faker import Faker
@@ -39,6 +39,8 @@ class Simulator:
     distribution = "" if 'distribution' not in durationProps else durationProps['distribution']
     if distribution == "constantDistribution":
       result = durationProps['params']['constantValue']
+    elif distribution == 'normalDistribution':
+      result = normalvariate(durationProps['params']['mean'],durationProps['params']['standard_deviation'])
     elif distribution == "exponentialDistribution":
       result = expovariate(1.0 / durationProps['params']['mean'])
     
