@@ -1,12 +1,13 @@
 from simpy import Environment, Resource, PreemptiveResource, Store, PriorityStore
 from simpy.events import AllOf, AnyOf, Event
 from simpy.exceptions import Interrupt
-from random import expovariate, normalvariate, randint, random, seed
+#from random import expovariate, normalvariate, randint, random, seed
 
 from datetime import timedelta
 from faker import Faker
 
 import copy
+import random
 
 fake = Faker()
 
@@ -37,12 +38,17 @@ class Simulator:
   def getDurationTime(self, durationProps):
     result = 0
     distribution = "" if 'distribution' not in durationProps else durationProps['distribution']
+    params = durationProps['params']
     if distribution == "constantDistribution":
-      result = durationProps['params']['constantValue']
+      result = params['constantValue']
     elif distribution == 'normalDistribution':
-      result = normalvariate(durationProps['params']['mean'],durationProps['params']['standard_deviation'])
+      result = random.normalvariate(params['mean'],params['standard_deviation'])
     elif distribution == "exponentialDistribution":
-      result = expovariate(1.0 / durationProps['params']['mean'])
+      result = random.expovariate(1.0 / params['mean'])
+    elif distribution == "uniformDistribution":
+      result = random.uniform(params['low'],params['high'])
+    elif distribution == "triangularDistribution":
+      result = random.triangular( params['low'],params['high'],params['mode'])
     
     if 'timeUnit' in durationProps:
       if durationProps['timeUnit'] == "MINUTES":
@@ -140,7 +146,7 @@ class Simulator:
 
       selectedFlow = node[1]['outgoing'][0]      
       if len(node[1]['outgoing']) > 1:
-        randVar, acc = random(), 0
+        randVar, acc = random.random(), 0
         for outgoing in simProps:
           acc += simProps[outgoing]
           if randVar <= acc:
@@ -178,7 +184,7 @@ class Simulator:
 
       selectedFlow = node[1]['outgoing'][0]    
       if len(node[1]['outgoing']) > 1:
-        randVar, acc = random(), 0
+        randVar, acc = random.random(), 0
         for outgoing in simProps:
           acc += simProps[outgoing]
           if randVar <= acc:
