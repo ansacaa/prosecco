@@ -18,7 +18,9 @@ class Properties:
             "SUNDAY": 6
         }
         def translateTimeDayOfWeek(time, dayOfWeek):
-            return int(time[:2])*3600 + int(time[-2])*60 + offsets[dayOfWeek]*daySize
+            # only assume presence of ':' but no specific lengths for hours or minutes
+            [hours,minutes] = time.split(":")
+            return int(hours)*3600 + int(minutes)*60 + offsets[dayOfWeek]*daySize
 
         result = [
             [
