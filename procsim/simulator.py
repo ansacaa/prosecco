@@ -1,12 +1,13 @@
 from simpy import Environment, Resource, PreemptiveResource, Store, PriorityStore
 from simpy.events import AllOf, AnyOf, Event
 from simpy.exceptions import Interrupt
-from random import random, seed, randint, expovariate
+#from random import expovariate, normalvariate, randint, random, seed
 
 from datetime import timedelta
 from faker import Faker
 
 import copy
+import random
 
 fake = Faker()
 
@@ -31,16 +32,23 @@ class Simulator:
     self.env = Environment()
     self.resources = dict()
     self.timeTables = dict()
-    self.schedules = copy.deepcopy(self.props['global']['timeTables']) # dict([(schedule, timeTableDefs[schedule]) for schedule in timeTableDefs.keys()])
+    self.schedules = copy.deepcopy(self.props['global']['timeTables'])
     
 
   def getDurationTime(self, durationProps):
     result = 0
     distribution = "" if 'distribution' not in durationProps else durationProps['distribution']
+    params = durationProps['params']
     if distribution == "constantDistribution":
-      result = durationProps['params']['constantValue']
+      result = params['constantValue']
+    elif distribution == 'normalDistribution':
+      result = random.normalvariate(params['mean'],params['standard_deviation'])
     elif distribution == "exponentialDistribution":
-      result = expovariate(1.0 / durationProps['params']['mean'])
+      result = random.expovariate(1.0 / params['mean'])
+    elif distribution == "uniformDistribution":
+      result = random.uniform(params['low'],params['high'])
+    elif distribution == "triangularDistribution":
+      result = random.triangular( params['low'],params['high'],params['mode'])
     
     if 'timeUnit' in durationProps:
       if durationProps['timeUnit'] == "MINUTES":
@@ -50,6 +58,7 @@ class Simulator:
 
     return result
 
+  # not used !!!???
   def possibleToComplete(self, resource, duration):
     result = 0
     for schedule in self.schedules[resource.timetable]:
@@ -138,7 +147,7 @@ class Simulator:
 
       selectedFlow = node[1]['outgoing'][0]      
       if len(node[1]['outgoing']) > 1:
-        randVar, acc = random(), 0
+        randVar, acc = random.random(), 0
         for outgoing in simProps:
           acc += simProps[outgoing]
           if randVar <= acc:
@@ -176,7 +185,7 @@ class Simulator:
 
       selectedFlow = node[1]['outgoing'][0]    
       if len(node[1]['outgoing']) > 1:
-        randVar, acc = random(), 0
+        randVar, acc = random.random(), 0
         for outgoing in simProps:
           acc += simProps[outgoing]
           if randVar <= acc:
@@ -203,10 +212,8 @@ class Simulator:
     startTime = self.daysOffset * 86400
     while startTime < endTime and caseId <= entities:
       for interval in self.schedules['Default']:
-        startTime = max(interval[0] + week * 86400*7,startTime)
-        if startTime >= endTime or caseId > entities:
-          break
-        while startTime < interval[1] + week * 86400*7:
+        startTime = max(interval[0] + week * 86400*7, startTime)
+        while startTime < interval[1] + week * 86400*7 and startTime < endTime and caseId < entities:
           result.append((caseId, startTime))
           startTime += self.getDurationTime(arrivalRate)
           caseId += 1
@@ -216,7 +223,7 @@ class Simulator:
   def run(self, startDate, endDate=None, entities=None):
     self.startDate = startDate
     self.daysOffset = startDate.weekday()
-    self.logger = self.Logger(startDate, 0, self.env)
+    self.logger = self.Logger(startDate, self.daysOffset, self.env)
     self.resourceCreator()
     startCases = self.cases(self.processGraph.get_nodes_id_list_by_type('startEvent'), endDate, entities)
     for caseId, startTime in startCases:
@@ -275,8 +282,11 @@ class Simulator:
             self.timeTables[timetable] = []
             
         for _n in range(defaultQuantity):
-            resourceItem = PreemptiveResource(self.env, 1)
-            resourceItem.name = fake.name()
+            resourceItem = PreemptiveResource(self.env, 1) 
+            if 'generateName' in res:
+              resourceItem.name = resource.id + '_' + f'{_n:02d}'
+            else:
+              resourceItem.name = fake.name()
             resourceItem.role = res['id']
             resourceItem.timetable = res['defaultTimetableId']
             self.resources[resource].put(resourceItem)
@@ -410,9 +420,12 @@ class Simulator:
                 simulated += step
                 missing -= step
                 if simulated < task.duration:
-                    self.logger.write(task, self, "susppend")
-                    yield self.env.timeout(self._changeSchedule())
-                    self.logger.write(task, self, "resume")
+                    waitForNextScheduleStart = self._changeSchedule()
+                    # if wait=0 then actually there is no suspension of the task
+                    if waitForNextScheduleStart > 0: 
+                      self.logger.write(task, self, "suspend")
+                      yield self.env.timeout(waitForNextScheduleStart)
+                      self.logger.write(task, self, "resume")
 
             self.logger.write(task, self, "complete")
             task.event.succeed()
@@ -438,7 +451,11 @@ class Simulator:
         timetable = res['defaultTimetableId']
             
         for _n in range(defaultQuantity):
-            resourceItem = self.Resource(self.env, fake.name(),self.resources[resource],self.schedules[timetable], self.logger)
+            if 'generateName' in res:
+              name = res['id'] + '_' + f'{_n:02d}'
+            else:
+              name = fake.name()
+            resourceItem = self.Resource(self.env, name, self.resources[resource], self.schedules[timetable], self.logger)
             self.env.process(resourceItem.run())
 
   class Logger:

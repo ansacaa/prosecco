@@ -72,7 +72,7 @@ This object is the one containing all the information about the environment of t
 * timetables: An array where you can specify all the differents schedules that your process or resources will have. Only one time table is required with the id set as 'Default', since this will be the time table used for creating the process cases; all the others tables you want to define are completelly optional. Each element of the array is required to have the following attributes.
     * id: The identifier of the time table.
     * items: An array that contains the time intervals active on the schedule. Each one of the time intervals is an object containing these values:
-        * from: The start day of the week for the interval. It has to be a string of the day name in English writen on upper case e.g. "MONDAY" or "SUNDAY".
+        * from: The start day of the week for the interval. It has to be a string of the day name in English written on upper case e.g. "MONDAY" or "SUNDAY".
         * to: The end day of the week for the interval. 
         * beginTime: The hour when the interval begins. It has to be a sting containing the hour on the format HH:MM, seconds are not taken into account for this so they will be ignored.
         * endTime: The hour when the interval finishes.
@@ -81,11 +81,11 @@ This object is the one containing all the information about the environment of t
 
 The simulation properties object contains all the details needed for the simulation to run correctly. This configuration properties are specific for each one of the tasks and, in most of the cases it has to be unique for a diagram. The structure of the file is a map with (key) => (value) format, where the key is the id of the task, event or gateway on the diagram, and value is an object containing the required attributes. 
 The value object change depending on whether the node is a task, a gateway or an event. Each one of this requires the following properties:
-* Start Event: It is mandatory that the start event is being specified on the simulation properties object, if it is not defined or the simultaor can't find it, the simulation won't take place, the configuration object for the start event requires the following attributes:
+* Start Event: It is mandatory that the start event is being specified on the simulation properties object, if it is not defined or the simulator can't find it, the simulation won't take place, the configuration object for the start event requires the following attributes:
     * arrivalRate: An object that defines how the cases will arrive on the simulation, it requires the following properties:
         * unitTime: It can be "HOURS", "MINUTES" or "SECONDS". If another value is given then the default time unit will be "SECONDS".
-        * distribution: The probabilistic distribution that will be used for generating the numbers. At this moment only constant and exponential distributions are avaible, but more will be added on further releases.
-        * params: The parameters needed to generate the number according to the distibution. This object needs to be differnt for each distribution type.
+        * distribution: The probabilistic distribution that will be used for generating the numbers. At this moment constant, normal distribution, exponential, uniform and triangular distributions are avaible.
+        * params: The parameters needed to generate the number according to the distibution. This object needs to be different for each distribution type.
 * Gateway: Not all gateways must have a configuration object defined. Only the ones that choses an outgoing among many, e.g. an Exclusive Gateway that will activate only one outgoing and the other will remain closed. The properties required are written as a (key) => (value) map, where key is the id of the outgoing flow and value is a float describing the probability of chosing that option on a [0,1] range.
 * Task: As with the gateways, not all task are required to have a properties object, if no object is defined for a task the simulator will assume it has a 0 seconds duration and that it uses no resources. In case you want to change any of those things on the simulation you will need to add that task to the simulation properties file. The structure is as following:
     * duration: an object that the defines how the duration of the task will be calculated, the format of this object is the same as arrivalRate for a start event.
